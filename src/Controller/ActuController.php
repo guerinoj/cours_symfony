@@ -13,7 +13,6 @@ final class ActuController extends AbstractController
     {
         return $this->render('actu/show.html.twig', [
             'slug' => $slug,
-            'news' => ['article-1', 'article-2', 'article-3']
         ]);
     }
 
@@ -21,10 +20,7 @@ final class ActuController extends AbstractController
     public function index(): Response
     {
         return $this->render(
-            'actu/index.html.twig',
-            [
-                'news' => ['article-1', 'article-2', 'article-3']
-            ]
+            'actu/index.html.twig'
         );
     }
 }
