@@ -14,6 +14,7 @@ final class HomeController extends AbstractController
     {
         return $this->render('home/index.html.twig', [
             'name' => $request->query->get('name'),
+            'news' => ['article-1', 'article-2', 'article-3'],
         ]);
     }
 }

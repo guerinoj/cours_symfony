@@ -11,17 +11,20 @@ final class ActuController extends AbstractController
     #[Route('/actu/{slug}', name: 'actu.show', requirements: ['slug' => '[a-z0-9\-]+'])]
     public function show(string $slug): Response
     {
-        return new Response('Article : ' . ($slug));
+        return $this->render('actu/show.html.twig', [
+            'slug' => $slug,
+            'news' => ['article-1', 'article-2', 'article-3']
+        ]);
     }
 
     #[Route('/actu', name: 'actu.index')]
     public function index(): Response
     {
-        return new Response('<h1>Liste des articles</h1>
-        <ul>
-            <li><a href="/actu/article-1">Article 1</a></li>
-            <li><a href="/actu/article-2">Article 2</a></li>
-            <li><a href="/actu/article-3">Article 3</a></li>
-        </ul>');
+        return $this->render(
+            'actu/index.html.twig',
+            [
+                'news' => ['article-1', 'article-2', 'article-3']
+            ]
+        );
     }
 }
