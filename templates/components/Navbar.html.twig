@@ -16,9 +16,9 @@
 						News
 					</a>
 					<ul class="dropdown-menu">
-						{% for article in news %}
+						{% for post in this.getPosts() %}
 							<li>
-								<a class="dropdown-item" href="{{ path('actu.show', { 'slug': article.slug }) }}">{{ article.title }}</a>
+								<a class="dropdown-item" href="{{ path('actu.show', { 'id': post.id }) }}">{{ post.title }}</a>
 							</li>
 						{% endfor %}
 					</ul>

@@ -1,13 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Article :
-	{{ slug }}
+	{{ post.title }}
 {% endblock %}
 
 {% block body %}
 
 	<div>
-		<h1>{{ slug }}!</h1>
-		<p class="lead">Welcome to the article page.</p>
+		<h1>{{ post.title }} by {{ post.author }}!</h1>
+		<p class="lead">{{ post.content }}</p>
+
+		<a href="{{ path('actu.index') }}" class="btn btn-primary">Back to news list</a>
+
 	</div>
 {% endblock %}
