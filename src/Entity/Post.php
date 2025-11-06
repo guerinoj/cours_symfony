@@ -29,6 +29,9 @@ class Post
     #[ORM\Column]
     private ?bool $is_published = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $author = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +93,18 @@ class Post
     public function setIsPublished(bool $is_published): static
     {
         $this->is_published = $is_published;
+
+        return $this;
+    }
+
+    public function getAuthor(): ?string
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?string $author): static
+    {
+        $this->author = $author;
 
         return $this;
     }
