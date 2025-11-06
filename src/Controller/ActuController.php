@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Dom\Entity;
 use App\Entity\Post;
+use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -16,7 +17,7 @@ final class ActuController extends AbstractController
     public function create(EntityManagerInterface $entityManager): Response
     {
         $post = new Post();
-        $post->setTitle('New Article');
+        $post->setTitle('Article inconnu');
         $post->setContent('Content of the new article');
         $post->setCreatedAt(new \DateTimeImmutable());
         $post->setIsPublished(true);
@@ -31,19 +32,30 @@ final class ActuController extends AbstractController
         return new Response('Create an article : ' . $post->getTitle());
     }
 
-    #[Route('/actu/{slug}', name: 'actu.show', requirements: ['slug' => '[a-z0-9\-]+'])]
-    public function show(string $slug): Response
+    #[Route('/actu/{id}', name: 'actu.show', requirements: ['id' => '\d+'])]
+    public function show(PostRepository $postRepository, int $id): Response
     {
+        // Find the post by its ID
+        $post = $postRepository->find($id);
+
+        if (!$post) {
+            throw $this->createNotFoundException('Article not found');
+        }
+
+        // Render the post details
         return $this->render('actu/show.html.twig', [
-            'slug' => $slug,
+            'post' => $post,
         ]);
     }
 
     #[Route('/actu', name: 'actu.index')]
-    public function index(): Response
+    public function index(PostRepository $postRepository): Response
     {
+        $posts = $postRepository->findBy(['is_published' => true], ['createdAt' => 'DESC']);
+
         return $this->render(
-            'actu/index.html.twig'
+            'actu/index.html.twig',
+            ['posts' => $posts]
         );
     }
 }

@@ -4,7 +4,16 @@
 {% endblock %}
 
 {% block body %}
-	<p>
-		coucou
-	</p>
+		<h1>Liste des articles</h1>
+
+		<ul>
+				{% for post in posts %}
+						<li>
+								<a href="{{ path('actu.show', { 'id': post.id }) }}">{{ post.title }}</a>
+								- {{ post.createdAt|date('d/m/Y') }}
+						</li>
+				{% else %}
+						<li>Aucun article publié pour le moment.</li>
+				{% endfor %}
+		</ul>
 {% endblock %}
