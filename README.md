@@ -74,8 +74,8 @@ flowchart TD
     Repository -->|7. Retourne| Controller
     
     Controller -->|Pour sauvegarder| EntityManager
-    EntityManager -->|persist()| Entity
-    EntityManager -->|flush()| DB
+    EntityManager -->|Méthode persist| Entity
+    EntityManager -->|Méthode flush| DB
 ```
 
 ### 🔄 Cycle de vie d'une entité
