@@ -2,7 +2,6 @@
 
 namespace App\Twig\Components;
 
-use App\Entity\Post;
 use App\Repository\PostRepository;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
