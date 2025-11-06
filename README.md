@@ -58,19 +58,14 @@ cours_symfony/
 ### 📊 Schéma de fonctionnement avec l'entité Post
 
 ```mermaid
-graph TB
-    subgraph "Application Symfony"
-        Controller[🎮 Controller<br/>ActuController]
-        Entity[📋 Entity<br/>Post.php]
-        Repository[🔍 Repository<br/>PostRepository.php]
-        EntityManager[⚙️ EntityManager<br/>Gestionnaire principal]
-    end
+flowchart TD
+    Controller[🎮 Controller<br/>ActuController]
+    Repository[🔍 Repository<br/>PostRepository]
+    EntityManager[⚙️ EntityManager<br/>Gestionnaire principal]
+    Entity[📋 Entity<br/>Post.php]
+    DB[(🗄️ Base de Données<br/>Table: post)]
     
-    subgraph "Base de Données"
-        DB[(🗄️ MySQL/PostgreSQL<br/>Table: post)]
-    end
-    
-    Controller -->|1. Demande des données| Repository
+    Controller -->|1. Demande données| Repository
     Repository -->|2. Utilise| EntityManager
     EntityManager -->|3. Requête SQL| DB
     DB -->|4. Données brutes| EntityManager
@@ -81,12 +76,6 @@ graph TB
     Controller -->|Pour sauvegarder| EntityManager
     EntityManager -->|persist()| Entity
     EntityManager -->|flush()| DB
-    
-    style Controller fill:#e1f5fe
-    style Entity fill:#f3e5f5
-    style Repository fill:#e8f5e8
-    style EntityManager fill:#fff3e0
-    style DB fill:#ffebee
 ```
 
 ### 🔄 Cycle de vie d'une entité
