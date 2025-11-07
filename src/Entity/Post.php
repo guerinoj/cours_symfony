@@ -29,8 +29,9 @@ class Post
     #[ORM\Column]
     private ?bool $is_published = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $author = null;
+    #[ORM\ManyToOne(inversedBy: 'posts')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Author $author = null;
 
     public function getId(): ?int
     {
@@ -97,12 +98,12 @@ class Post
         return $this;
     }
 
-    public function getAuthor(): ?string
+    public function getAuthor(): ?Author
     {
         return $this->author;
     }
 
-    public function setAuthor(?string $author): static
+    public function setAuthor(?Author $author): static
     {
         $this->author = $author;
 

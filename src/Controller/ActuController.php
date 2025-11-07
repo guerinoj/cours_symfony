@@ -21,11 +21,7 @@ final class ActuController extends AbstractController
         $postsCount = $entityManager->getRepository(Post::class)->count([]);
 
         $post = new Post();
-        $post->setTitle('Article Symfony' . ($postsCount + 1));
-        $post->setContent('Content of the new article');
-        $post->setCreatedAt(new \DateTimeImmutable());
-        $post->setIsPublished(true);
-        $post->setAuthor('John Doe');
+        //TODO : remplacer par un formulaire
 
         // Persist the new post entity
         $entityManager->persist($post);

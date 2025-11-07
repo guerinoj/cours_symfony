@@ -16,7 +16,6 @@ class PostType extends AbstractType
             ->add('title')
             ->add('content')
             ->add('is_published')
-            ->add('author')
             ->add('button', SubmitType::class, [
                 'label' => 'Save Post',
             ])
