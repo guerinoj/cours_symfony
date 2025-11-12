@@ -7,8 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[UniqueEntity('name')]
+#[UniqueEntity('slug')]
 class Category
 {
     #[ORM\Id]
@@ -16,10 +20,23 @@ class Category
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column()]
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: 'The name must be at least {{ limit }} characters long',
+        maxMessage: 'The name cannot be longer than {{ limit }} characters',
+    )]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: 'The slug must be at least {{ limit }} characters long',
+        maxMessage: 'The slug cannot be longer than {{ limit }} characters',
+    )]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -129,5 +146,10 @@ class Category
         $this->posts->removeElement($post);
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name ?? 'Catégorie sans nom';
     }
 }

@@ -16,20 +16,35 @@ final class ActuController extends AbstractController
 {
 
     #[Route('/actu/create', name: 'actu.create')]
-    public function create(EntityManagerInterface $entityManager): Response
+    public function create(EntityManagerInterface $entityManager, Request $request): Response
     {
         $postsCount = $entityManager->getRepository(Post::class)->count([]);
 
         $post = new Post();
-        //TODO : remplacer par un formulaire
 
-        // Persist the new post entity
-        $entityManager->persist($post);
+        $form = $this->createForm(PostType::class, $post);
+        $form->handleRequest($request);
 
-        // Flush to save it to the database
-        $entityManager->flush();
+        // Debug: vérifier si le formulaire est soumis
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $post->setCreatedAt(new \DateTimeImmutable());
+                // Persist the new post entity
+                $entityManager->persist($post);
+                // Flush to save it to the database
+                $entityManager->flush();
 
-        return new Response('Create an article : ' . $post->getTitle());
+                $this->addFlash('success', 'Article créé avec succès !');
+                return $this->redirectToRoute('actu.show', ['id' => $post->getId()]);
+            } else {
+                $this->addFlash('error', 'Le formulaire contient des erreurs. Veuillez corriger les champs en rouge.');
+            }
+        }
+
+        return $this->render('actu/create.html.twig', [
+            'form' => $form->createView(),
+            'postsCount' => $postsCount,
+        ]);
     }
 
     #[Route('/actu/{id}', name: 'actu.show', requirements: ['id' => '\d+'])]
