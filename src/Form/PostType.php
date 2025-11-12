@@ -33,6 +33,7 @@ class PostType extends AbstractType
                 'expanded' => true,
                 'required' => false,
                 'label' => 'Categories',
+                'by_reference' => false,
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Enregistrer',
