@@ -2,11 +2,6 @@
 
 {% block title %}Actualités{% endblock %}
 
-{% block javascripts %}
-{{ parent() }}
-{{ importmap('app', ['js/pages/actu-index.js']) }}
-{% endblock %}
-
 {% block body %}
 <div class="container-fluid px-4 py-4">
 	<!-- Messages Flash avec le composant -->
@@ -22,19 +17,22 @@
 				<i class="fas fa-newspaper me-2"></i>Actualités
 			</h1>
 			<p class="text-muted mb-0">
-				{{ posts|length }} article{% if posts|length > 1 %}s{% endif %}
+				{{ posts|length }} article{% if posts|length > 1 %}s{% endif %} 
+				{% if currentSearch %}
+					pour "{{ currentSearch }}"
+				{% endif %}
 				{% if currentCategory %}
-				dans la catégorie "{{ currentCategory }}"
-				{% else %}
-				publié{% if posts|length > 1 %}s{% endif %}
+					dans la catégorie "{{ currentCategory }}"
+				{% elseif not currentSearch %}
+					publié{% if posts|length > 1 %}s{% endif %}
 				{% endif %}
 			</p>
-			{% if currentCategory %}
-			<div class="mt-2">
-				<a href="{{ path('actu.index') }}" class="btn btn-outline-secondary btn-sm">
-					<i class="fas fa-times me-1"></i>Supprimer le filtre
-				</a>
-			</div>
+			{% if currentCategory or currentSearch %}
+				<div class="mt-2">
+					<a href="{{ path('actu.index') }}" class="btn btn-outline-secondary btn-sm">
+						<i class="fas fa-times me-1"></i>Supprimer tous les filtres
+					</a>
+				</div>
 			{% endif %}
 		</div>
 		<div>
@@ -47,21 +45,43 @@
 	<!-- Barre de recherche et filtres -->
 	<div class="row mb-4">
 		<div class="col-lg-8">
-			<div class="input-group">
-				<span class="input-group-text">
-					<i class="fas fa-search"></i>
-				</span>
-				<input type="text" class="form-control" id="searchInput" placeholder="Rechercher dans les articles..." />
-			</div>
+			<form method="GET" action="{{ path('actu.index') }}" class="d-flex">
+				<div class="input-group">
+					<span class="input-group-text">
+						<i class="fas fa-search"></i>
+					</span>
+					<input type="text" 
+						   class="form-control" 
+						   name="search" 
+						   value="{{ currentSearch }}"
+						   placeholder="Rechercher dans les articles (titre, contenu, auteur)..." />
+					<!-- Maintenir le filtre de catégorie lors de la recherche -->
+					{% if currentCategory %}
+						<input type="hidden" name="category" value="{{ currentCategory }}" />
+					{% endif %}
+				</div>
+				<button type="submit" class="btn btn-primary ms-2">
+					<i class="fas fa-search me-1"></i>Rechercher
+				</button>
+				{% if currentSearch or currentCategory %}
+					<a href="{{ path('actu.index') }}" class="btn btn-outline-secondary ms-2">
+						<i class="fas fa-times me-1"></i>Reset
+					</a>
+				{% endif %}
+			</form>
 		</div>
 		<div class="col-lg-4">
 			<form method="GET" action="{{ path('actu.index') }}" id="categoryForm">
-				<select class="form-select" id="categoryFilter" name="category" onchange="this.form.submit()">
+				<!-- Maintenir la recherche lors du changement de catégorie -->
+				{% if currentSearch %}
+					<input type="hidden" name="search" value="{{ currentSearch }}" />
+				{% endif %}
+				<select class="form-select" name="category" onchange="this.form.submit()">
 					<option value="">Toutes les catégories</option>
 					{% for category in categories %}
-					<option value="{{ category.name }}" {% if currentCategory==category.name %}selected{% endif %}>
-						{{ category.name }}
-					</option>
+						<option value="{{ category.name }}" {% if currentCategory == category.name %}selected{% endif %}>
+							{{ category.name }}
+						</option>
 					{% endfor %}
 				</select>
 			</form>
@@ -71,9 +91,7 @@
 	<!-- Liste des articles -->
 	<div class="row g-4" id="postsContainer">
 		{% for post in posts %}
-		<div class="col-lg-6 col-xl-4 post-card" data-title="{{ post.title|lower }}"
-			data-content="{{ post.content|striptags|lower }}"
-			data-categories="{% for category in post.categories %}{{ category.name }}{% if not loop.last %} {% endif %}{% endfor %}">
+		<div class="col-lg-6 col-xl-4">
 			<div class="card h-100 shadow-sm hover-shadow">
 				<div class="card-header bg-white border-0 pb-0">
 					<div class="d-flex justify-content-between align-items-start">

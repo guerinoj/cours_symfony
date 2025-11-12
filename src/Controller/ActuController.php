@@ -133,23 +133,15 @@ final class ActuController extends AbstractController
     #[Route('/actu', name: 'actu.index')]
     public function index(PostRepository $postRepository, EntityManagerInterface $entityManager, Request $request): Response
     {
-        // Récupérer le filtre de catégorie depuis la requête
+        // Récupérer les paramètres de recherche et filtrage
+        $searchQuery = trim($request->query->get('search', ''));
         $categoryFilter = $request->query->get('category');
 
-        // Construire la requête pour les posts avec un filtre optionnel par catégorie
-        $qb = $postRepository->createQueryBuilder('p')
-            ->where('p.is_published = :published')
-            ->setParameter('published', true)
-            ->orderBy('p.createdAt', 'DESC');
-
-        // Si un filtre de catégorie est spécifié, ajouter la condition
-        if ($categoryFilter) {
-            $qb->innerJoin('p.categories', 'c')
-                ->andWhere('c.name = :categoryName')
-                ->setParameter('categoryName', $categoryFilter);
-        }
-
-        $posts = $qb->getQuery()->getResult();
+        // Utiliser la méthode dédiée du repository
+        $posts = $postRepository->findPublishedWithFilters(
+            !empty($searchQuery) ? $searchQuery : null,
+            !empty($categoryFilter) ? $categoryFilter : null
+        );
 
         // Récupérer toutes les catégories utilisées dans les posts publiés
         $categories = $entityManager->getRepository(\App\Entity\Category::class)
@@ -161,20 +153,38 @@ final class ActuController extends AbstractController
             ->getQuery()
             ->getResult();
 
-        // Message informatif selon le contexte
-        if ($categoryFilter && count($posts) === 0) {
-            $this->addFlash('info', "Aucun article trouvé dans la catégorie \"{$categoryFilter}\".");
-        } elseif (!$categoryFilter && count($posts) === 0) {
-            $this->addFlash('info', 'Aucun article publié pour le moment.');
-        }
+        // Messages informatifs selon le contexte
+        $this->addContextualMessages($searchQuery, $categoryFilter, count($posts));
 
         return $this->render(
             'actu/index.html.twig',
             [
                 'posts' => $posts,
                 'categories' => $categories,
-                'currentCategory' => $categoryFilter, // Pour maintenir la sélection dans le filtre
+                'currentCategory' => $categoryFilter,
+                'currentSearch' => $searchQuery,
             ]
         );
+    }
+
+    /**
+     * Ajoute des messages contextuels selon les résultats de recherche/filtrage
+     */
+    private function addContextualMessages(?string $searchQuery, ?string $categoryFilter, int $resultsCount): void
+    {
+        if ($resultsCount === 0) {
+            if (!empty($searchQuery) && $categoryFilter) {
+                $this->addFlash('info', "Aucun article trouvé pour \"{$searchQuery}\" dans la catégorie \"{$categoryFilter}\".");
+            } elseif (!empty($searchQuery)) {
+                $this->addFlash('info', "Aucun article trouvé pour \"{$searchQuery}\".");
+            } elseif ($categoryFilter) {
+                $this->addFlash('info', "Aucun article trouvé dans la catégorie \"{$categoryFilter}\".");
+            } else {
+                $this->addFlash('info', 'Aucun article publié pour le moment.');
+            }
+        } elseif (!empty($searchQuery) && $resultsCount > 0) {
+            $articleText = $resultsCount === 1 ? 'article trouvé' : 'articles trouvés';
+            $this->addFlash('success', "{$resultsCount} {$articleText} pour \"{$searchQuery}\".");
+        }
     }
 }

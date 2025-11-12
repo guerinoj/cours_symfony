@@ -1,0 +1,72 @@
+/* Styles pour la page d'index des actualités avec recherche serveur */
+.search-highlight {
+    background-color: rgba(var(--bs-warning-rgb), 0.3);
+    font-weight: 500;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+.search-form {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+}
+
+.filter-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.filter-badge {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bs-primary);
+    color: white;
+    padding: 0.375rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    text-decoration: none;
+}
+
+.filter-badge:hover {
+    background: var(--bs-primary);
+    color: white;
+    opacity: 0.8;
+}
+
+.filter-badge .remove {
+    margin-left: 0.5rem;
+    opacity: 0.7;
+}
+
+.filter-badge .remove:hover {
+    opacity: 1;
+}
+
+/* Animation pour les résultats de recherche */
+@keyframes searchResult {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.search-results .col-lg-6 {
+    animation: searchResult 0.3s ease-out;
+}
+
+/* Responsive pour les formulaires de recherche */
+@media (max-width: 768px) {
+    .search-form .input-group {
+        margin-bottom: 1rem;
+    }
+    
+    .search-form .btn {
+        width: 100%;
+    }
+}

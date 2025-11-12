@@ -6,5 +6,6 @@
 
 /* Import des styles spécifiques aux pages */
 @import "./pages/actu-index.css";
+@import "./pages/actu-search.css";
 
 /* Styles globaux de l'application 
