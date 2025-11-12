@@ -1,0 +1,63 @@
+/* Page Actualités - Liste des articles */
+.hover-shadow {
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card-title a:hover {
+    color: var(--bs-primary) !important;
+    text-decoration: none !important;
+}
+
+.btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem !important;
+}
+
+.badge {
+    font-size: 0.7rem;
+}
+
+.input-group .form-control:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+.stretched-link::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    content: "";
+}
+
+.btn-group .btn {
+    z-index: 10 !important;
+    position: relative;
+}
+
+/* États spéciaux */
+.empty-state {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.no-results {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

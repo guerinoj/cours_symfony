@@ -112,13 +112,43 @@ final class ActuController extends AbstractController
     }
 
     #[Route('/actu', name: 'actu.index')]
-    public function index(PostRepository $postRepository): Response
+    public function index(PostRepository $postRepository, EntityManagerInterface $entityManager, Request $request): Response
     {
-        $posts = $postRepository->findBy(['is_published' => true], ['createdAt' => 'DESC']);
+        // Récupérer le filtre de catégorie depuis la requête
+        $categoryFilter = $request->query->get('category');
+
+        // Construire la requête pour les posts avec un filtre optionnel par catégorie
+        $qb = $postRepository->createQueryBuilder('p')
+            ->where('p.is_published = :published')
+            ->setParameter('published', true)
+            ->orderBy('p.createdAt', 'DESC');
+
+        // Si un filtre de catégorie est spécifié, ajouter la condition
+        if ($categoryFilter) {
+            $qb->innerJoin('p.categories', 'c')
+                ->andWhere('c.name = :categoryName')
+                ->setParameter('categoryName', $categoryFilter);
+        }
+
+        $posts = $qb->getQuery()->getResult();
+
+        // Récupérer toutes les catégories utilisées dans les posts publiés
+        $categories = $entityManager->getRepository(\App\Entity\Category::class)
+            ->createQueryBuilder('c')
+            ->innerJoin('c.posts', 'p')
+            ->where('p.is_published = :published')
+            ->setParameter('published', true)
+            ->orderBy('c.name', 'ASC')
+            ->getQuery()
+            ->getResult();
 
         return $this->render(
             'actu/index.html.twig',
-            ['posts' => $posts]
+            [
+                'posts' => $posts,
+                'categories' => $categories,
+                'currentCategory' => $categoryFilter, // Pour maintenir la sélection dans le filtre
+            ]
         );
     }
 }

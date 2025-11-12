@@ -1,0 +1,24 @@
+/* Variables CSS pour les pages actualités */
+:root {
+    /* Couleurs spécifiques aux actualités */
+    --actu-primary-color: var(--bs-primary);
+    --actu-secondary-color: var(--bs-secondary);
+    --actu-muted-color: var(--bs-gray-600);
+
+    /* Espaces */
+    --actu-card-gap: 1.5rem;
+    --actu-section-spacing: 2rem;
+
+    /* Animations */
+    --actu-transition-fast: 0.2s ease-in-out;
+    --actu-transition-normal: 0.3s ease-in-out;
+
+    /* Ombres */
+    --actu-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --actu-shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --actu-shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
+
+    /* Rayons de bordure */
+    --actu-border-radius: 0.5rem;
+    --actu-border-radius-sm: 0.25rem;
+}

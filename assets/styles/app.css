@@ -1,3 +1,10 @@
+/* Import des variables globales */
+@import "./components/actu-variables.css";
+
+/* Import des styles spécifiques aux pages */
+@import "./pages/actu-index.css";
+
+/* Styles globaux de l'application */
 body {
     background-color: skyblue;
 }
