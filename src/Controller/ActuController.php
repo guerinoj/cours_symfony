@@ -34,10 +34,11 @@ final class ActuController extends AbstractController
                 // Flush to save it to the database
                 $entityManager->flush();
 
-                $this->addFlash('success', 'Article créé avec succès !');
+                $statusMessage = $post->isPublished() ? 'publié' : 'sauvegardé en brouillon';
+                $this->addFlash('success', "Article \"{$post->getTitle()}\" {$statusMessage} avec succès !");
                 return $this->redirectToRoute('actu.show', ['id' => $post->getId()]);
             } else {
-                $this->addFlash('error', 'Le formulaire contient des erreurs. Veuillez corriger les champs en rouge.');
+                $this->addFlash('warning', 'Le formulaire contient des erreurs. Veuillez corriger les champs en rouge.');
             }
         }
 
@@ -67,6 +68,7 @@ final class ActuController extends AbstractController
     public function edit(Post $post, EntityManagerInterface $entityManager, Request $request): Response
     {
         if (!$post) {
+            $this->addFlash('error', 'L\'article demandé n\'existe pas.');
             throw $this->createNotFoundException('Article not found');
         }
 
@@ -76,14 +78,22 @@ final class ActuController extends AbstractController
         // Handle the request data for the form
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                try {
+                    // Update the updatedAt field
+                    $post->setUpdatedAt(new \DateTimeImmutable());
+                    // Save the updated post entity
+                    $entityManager->flush();
 
-            // Update the updatedAt field
-            $post->setUpdatedAt(new \DateTimeImmutable());
-            // Save the updated post entity
-            $entityManager->flush();
-
-            return $this->redirectToRoute('actu.show', ['id' => $post->getId()]);
+                    $this->addFlash('success', "Article \"{$post->getTitle()}\" modifié avec succès !");
+                    return $this->redirectToRoute('actu.show', ['id' => $post->getId()]);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors de la sauvegarde. Veuillez réessayer.');
+                }
+            } else {
+                $this->addFlash('warning', 'Le formulaire contient des erreurs. Veuillez corriger les champs en rouge.');
+            }
         }
 
         // Render the edit form
@@ -100,12 +110,21 @@ final class ActuController extends AbstractController
         $post = $postRepository->find($id);
 
         if (!$post) {
+            $this->addFlash('error', 'L\'article à supprimer n\'existe pas.');
             throw $this->createNotFoundException('Article not found');
         }
 
-        // Remove the post
-        $entityManager->remove($post);
-        $entityManager->flush();
+        $postTitle = $post->getTitle(); // Sauvegarder le titre avant suppression
+
+        try {
+            // Remove the post
+            $entityManager->remove($post);
+            $entityManager->flush();
+
+            $this->addFlash('success', "Article \"{$postTitle}\" supprimé avec succès.");
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors de la suppression. Veuillez réessayer.');
+        }
 
         // Redirect to the index after deletion
         return $this->redirectToRoute('actu.index');
@@ -141,6 +160,13 @@ final class ActuController extends AbstractController
             ->orderBy('c.name', 'ASC')
             ->getQuery()
             ->getResult();
+
+        // Message informatif selon le contexte
+        if ($categoryFilter && count($posts) === 0) {
+            $this->addFlash('info', "Aucun article trouvé dans la catégorie \"{$categoryFilter}\".");
+        } elseif (!$categoryFilter && count($posts) === 0) {
+            $this->addFlash('info', 'Aucun article publié pour le moment.');
+        }
 
         return $this->render(
             'actu/index.html.twig',

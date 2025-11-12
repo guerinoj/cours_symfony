@@ -1,36 +1,114 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Article :
-	Création d'un article
-{% endblock %}
+{% block title %}Créer un article{% endblock %}
 
 {% block body %}
-	<div>
-		<h1>Création d'un article</h1>
-		
-		{# Affichage des messages flash #}
-		{% for type, messages in app.flashes %}
-			{% for message in messages %}
-				<div class="alert alert-{{ type }}">
-					{{ message }}
+<div class="container mt-4">
+	<div class="row">
+		<div class="col-lg-8 mx-auto">
+			<!-- Header -->
+			<div class="d-flex justify-content-between align-items-center mb-4">
+				<div>
+					<h1 class="h2 text-primary mb-1">
+						<i class="fas fa-plus-circle me-2"></i>Création d'un article
+					</h1>
+					<p class="text-muted mb-0">Rédigez et publiez votre nouvel article</p>
 				</div>
-			{% endfor %}
-		{% endfor %}
-		
-		{# Affichage des erreurs du formulaire #}
-		{{ form_errors(form) }}
-		
-		{{ form_start(form) }}
-			<div>
-				{{ form_row(form.title) }}
-				{{ form_row(form.content) }}
-				{{ form_row(form.is_published) }}
-				{{ form_row(form.author) }}
-				{{ form_row(form.categories) }}
+				<div>
+					<a href="{{ path('actu.index') }}" class="btn btn-outline-secondary">
+						<i class="fas fa-arrow-left me-1"></i>Retour à la liste
+					</a>
+				</div>
 			</div>
-			<div>
-				{{ form_row(form.submit) }}
+
+			<!-- Messages Flash avec le composant -->
+			{{ component('flash_messages', {
+			showTitles: true,
+			containerClass: 'mb-4'
+			}) }}
+
+			<!-- Formulaire de création -->
+			<div class="card shadow-sm">
+				<div class="card-header bg-white">
+					<h5 class="card-title mb-0">
+						<i class="fas fa-newspaper me-2"></i>Informations de l'article
+					</h5>
+				</div>
+				<div class="card-body">
+					{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							{{ form_row(form.title, {
+							'label': 'Titre de l\'article',
+							'attr': {
+							'class': 'form-control',
+							'placeholder': 'Saisissez un titre accrocheur...'
+							}
+							}) }}
+						</div>
+						<div class="col-md-6 mb-3">
+							{{ form_row(form.author, {
+							'label': 'Auteur',
+							'attr': {
+							'class': 'form-select'
+							}
+							}) }}
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-12 mb-3">
+							{{ form_row(form.content, {
+							'label': 'Contenu de l\'article',
+							'attr': {
+							'class': 'form-control',
+							'rows': 8,
+							'placeholder': 'Rédigez le contenu de votre article...'
+							}
+							}) }}
+						</div>
+					</div>
+
+					{% if form.categories is defined %}
+					<div class="row">
+						<div class="col-12 mb-3">
+							{{ form_row(form.categories, {
+							'label': 'Catégories',
+							'help': 'Sélectionnez une ou plusieurs catégories pour classer votre article'
+							}) }}
+						</div>
+					</div>
+					{% endif %}
+
+					{% if form.is_published is defined %}
+					<div class="row">
+						<div class="col-12 mb-3">
+							<div class="form-check">
+								{{ form_widget(form.is_published, {
+								'attr': {'class': 'form-check-input'}
+								}) }}
+								{{ form_label(form.is_published, 'Publier immédiatement', {
+								'label_attr': {'class': 'form-check-label'}
+								}) }}
+							</div>
+						</div>
+					</div>
+					{% endif %}
+
+					<!-- Boutons d'action -->
+					<div class="d-flex justify-content-between align-items-center mt-4">
+						<a href="{{ path('actu.index') }}" class="btn btn-outline-secondary">
+							<i class="fas fa-times me-1"></i>Annuler
+						</a>
+						<button type="submit" class="btn btn-primary">
+							<i class="fas fa-save me-1"></i>Créer l'article
+						</button>
+					</div>
+
+					{{ form_end(form) }}
+				</div>
 			</div>
-		{{ form_end(form) }}
+		</div>
 	</div>
+</div>
 {% endblock %}

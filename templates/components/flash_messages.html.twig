@@ -1,0 +1,28 @@
+{# templates/components/flash_messages.html.twig #}
+<div class="flash-messages {{ containerClass }}">
+  {% for type, messages in app.flashes %}
+  {% if type in this.supportedTypes %}
+  {% set config = this.getFlashConfig(type) %}
+
+  {% for message in messages %}
+  <div class="alert {{ config.alert_class }}{{ dismissible ? ' alert-dismissible' : '' }} fade show" role="alert">
+
+    {% if showIcons %}
+    <i class="fas {{ config.icon }} me-2"></i>
+    {% endif %}
+
+    {% if showTitles %}
+    <strong>{{ config.title }} :</strong>
+    {% endif %}
+
+    {{ message }}
+
+    {% if dismissible %}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer">
+    </button>
+    {% endif %}
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% endfor %}
+</div>

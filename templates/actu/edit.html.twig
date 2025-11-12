@@ -1,22 +1,145 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Article :
-	{{ post.title }}
-{% endblock %}
+{% block title %}Éditer : {{ post.title }}{% endblock %}
 
 {% block body %}
-	<div>
-		<h1>Édition de l'article {{ post.title }}</h1>
+<div class="container-fluid px-4 py-4">
+	<!-- Header -->
+	<div class="d-flex justify-content-between align-items-center mb-4">
 		<div>
-			{{ form_start(form) }}
-			<div class="row">
-				<div class="col-md-6 mb-3">
-					{{ form_row(form.title) }}
-				</div>
-				<div class="col-md-6 mb-3">
-					{{ form_row(form.author) }}
-				</div>
-			
-			{{ form_end(form) }}
+			<h1 class="h2 text-primary mb-1">
+				<i class="fas fa-edit me-2"></i>Édition de l'article
+			</h1>
+			<p class="text-muted mb-0">{{ post.title }}</p>
+		</div>
+		<div>
+			<a href="{{ path('actu.show', {'id': post.id}) }}" class="btn btn-outline-secondary">
+				<i class="fas fa-arrow-left me-1"></i>Retour à l'article
+			</a>
+		</div>
 	</div>
+
+	<!-- Messages Flash avec composant -->
+	{{ component('flash_messages', {
+	showTitles: true,
+	containerClass: 'mb-4'
+	}) }}
+
+	<!-- Formulaire d'édition -->
+	<div class="row">
+		<div class="col-lg-8">
+			<div class="card shadow-sm">
+				<div class="card-header bg-white">
+					<h5 class="card-title mb-0">
+						<i class="fas fa-newspaper me-2"></i>Informations de l'article
+					</h5>
+				</div>
+				<div class="card-body">
+					{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							{{ form_row(form.title, {
+							'label': 'Titre de l\'article',
+							'attr': {
+							'class': 'form-control',
+							'placeholder': 'Saisissez le titre...'
+							}
+							}) }}
+						</div>
+						<div class="col-md-6 mb-3">
+							{{ form_row(form.author, {
+							'label': 'Auteur',
+							'attr': {
+							'class': 'form-select'
+							}
+							}) }}
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-12 mb-3">
+							{{ form_row(form.content, {
+							'label': 'Contenu de l\'article',
+							'attr': {
+							'class': 'form-control',
+							'rows': 8,
+							'placeholder': 'Rédigez le contenu de votre article...'
+							}
+							}) }}
+						</div>
+					</div>
+
+					{% if form.categories is defined %}
+					<div class="row">
+						<div class="col-12 mb-3">
+							{{ form_row(form.categories, {
+							'label': 'Catégories',
+							'help': 'Sélectionnez une ou plusieurs catégories pour classer votre article'
+							}) }}
+						</div>
+					</div>
+					{% endif %}
+
+					{% if form.is_published is defined %}
+					<div class="row">
+						<div class="col-12 mb-3">
+							<div class="form-check">
+								{{ form_widget(form.is_published, {
+								'attr': {'class': 'form-check-input'}
+								}) }}
+								{{ form_label(form.is_published, null, {
+								'label_attr': {'class': 'form-check-label'}
+								}) }}
+							</div>
+						</div>
+					</div>
+					{% endif %}
+
+					<!-- Boutons d'action -->
+					<div class="d-flex justify-content-between align-items-center mt-4">
+						<a href="{{ path('actu.show', {'id': post.id}) }}" class="btn btn-outline-secondary">
+							<i class="fas fa-times me-1"></i>Annuler
+						</a>
+						<button type="submit" class="btn btn-primary">
+							<i class="fas fa-save me-1"></i>Enregistrer les modifications
+						</button>
+					</div>
+
+					{{ form_end(form) }}
+				</div>
+			</div>
+		</div>
+
+		<!-- Informations complémentaires -->
+		<div class="col-lg-4">
+			<div class="card shadow-sm">
+				<div class="card-header bg-light">
+					<h6 class="card-title mb-0">
+						<i class="fas fa-info-circle me-2"></i>Informations
+					</h6>
+				</div>
+				<div class="card-body">
+					<div class="small text-muted">
+						<p class="mb-2">
+							<strong>Créé le :</strong><br>
+							{{ post.createdAt|date('d/m/Y à H:i') }}
+						</p>
+						{% if post.updatedAt %}
+						<p class="mb-2">
+							<strong>Modifié le :</strong><br>
+							{{ post.updatedAt|date('d/m/Y à H:i') }}
+						</p>
+						{% endif %}
+						<p class="mb-0">
+							<strong>Statut :</strong><br>
+							<span class="badge bg-{{ post.isPublished ? 'success' : 'secondary' }}">
+								{{ post.isPublished ? 'Publié' : 'Brouillon' }}
+							</span>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}

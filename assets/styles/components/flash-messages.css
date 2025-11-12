@@ -1,0 +1,58 @@
+/* Flash Messages Component Styles */
+.flash-messages {
+    position: relative;
+}
+
+.flash-messages .alert {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+.flash-messages .alert:last-child {
+    margin-bottom: 0;
+}
+
+.flash-messages .alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-left: 4px solid var(--bs-success);
+}
+
+.flash-messages .alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-left: 4px solid var(--bs-danger);
+}
+
+.flash-messages .alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-left: 4px solid var(--bs-warning);
+}
+
+.flash-messages .alert-info {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    border-left: 4px solid var(--bs-info);
+}
+
+/* Animation d'entrée pour les messages */
+@keyframes flashSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.flash-messages .alert.show {
+    animation: flashSlideIn 0.3s ease-out;
+}
+
+/* Responsivité */
+@media (max-width: 768px) {
+    .flash-messages {
+        padding: 0 1rem;
+    }
+}

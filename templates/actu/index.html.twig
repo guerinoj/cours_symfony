@@ -3,12 +3,18 @@
 {% block title %}Actualités{% endblock %}
 
 {% block javascripts %}
-	{{ parent() }}
-	{{ importmap('app', ['js/pages/actu-index.js']) }}
+{{ parent() }}
+{{ importmap('app', ['js/pages/actu-index.js']) }}
 {% endblock %}
 
 {% block body %}
 <div class="container-fluid px-4 py-4">
+	<!-- Messages Flash avec le composant -->
+	{{ component('flash_messages', {
+	showTitles: false,
+	containerClass: 'mb-4'
+	}) }}
+
 	<!-- Header avec actions -->
 	<div class="d-flex justify-content-between align-items-center mb-4">
 		<div>
@@ -16,19 +22,19 @@
 				<i class="fas fa-newspaper me-2"></i>Actualités
 			</h1>
 			<p class="text-muted mb-0">
-				{{ posts|length }} article{% if posts|length > 1 %}s{% endif %} 
+				{{ posts|length }} article{% if posts|length > 1 %}s{% endif %}
 				{% if currentCategory %}
-					dans la catégorie "{{ currentCategory }}"
+				dans la catégorie "{{ currentCategory }}"
 				{% else %}
-					publié{% if posts|length > 1 %}s{% endif %}
+				publié{% if posts|length > 1 %}s{% endif %}
 				{% endif %}
 			</p>
 			{% if currentCategory %}
-				<div class="mt-2">
-					<a href="{{ path('actu.index') }}" class="btn btn-outline-secondary btn-sm">
-						<i class="fas fa-times me-1"></i>Supprimer le filtre
-					</a>
-				</div>
+			<div class="mt-2">
+				<a href="{{ path('actu.index') }}" class="btn btn-outline-secondary btn-sm">
+					<i class="fas fa-times me-1"></i>Supprimer le filtre
+				</a>
+			</div>
 			{% endif %}
 		</div>
 		<div>
@@ -45,8 +51,7 @@
 				<span class="input-group-text">
 					<i class="fas fa-search"></i>
 				</span>
-				<input type="text" class="form-control" id="searchInput" 
-					   placeholder="Rechercher dans les articles..." />
+				<input type="text" class="form-control" id="searchInput" placeholder="Rechercher dans les articles..." />
 			</div>
 		</div>
 		<div class="col-lg-4">
@@ -54,9 +59,9 @@
 				<select class="form-select" id="categoryFilter" name="category" onchange="this.form.submit()">
 					<option value="">Toutes les catégories</option>
 					{% for category in categories %}
-						<option value="{{ category.name }}" {% if currentCategory == category.name %}selected{% endif %}>
-							{{ category.name }}
-						</option>
+					<option value="{{ category.name }}" {% if currentCategory==category.name %}selected{% endif %}>
+						{{ category.name }}
+					</option>
 					{% endfor %}
 				</select>
 			</form>
@@ -66,86 +71,82 @@
 	<!-- Liste des articles -->
 	<div class="row g-4" id="postsContainer">
 		{% for post in posts %}
-			<div class="col-lg-6 col-xl-4 post-card" 
-				 data-title="{{ post.title|lower }}" 
-				 data-content="{{ post.content|striptags|lower }}"
-				 data-categories="{% for category in post.categories %}{{ category.name }}{% if not loop.last %} {% endif %}{% endfor %}">
-				<div class="card h-100 shadow-sm hover-shadow">
-					<div class="card-header bg-white border-0 pb-0">
-						<div class="d-flex justify-content-between align-items-start">
-							<div class="d-flex align-items-center text-muted small">
-								<i class="fas fa-user me-1"></i>
-								<span>{{ post.author }}</span>
-							</div>
-							<div class="d-flex align-items-center text-muted small">
-								<i class="fas fa-calendar me-1"></i>
-								<span>{{ post.createdAt|date('d/m/Y') }}</span>
-							</div>
+		<div class="col-lg-6 col-xl-4 post-card" data-title="{{ post.title|lower }}"
+			data-content="{{ post.content|striptags|lower }}"
+			data-categories="{% for category in post.categories %}{{ category.name }}{% if not loop.last %} {% endif %}{% endfor %}">
+			<div class="card h-100 shadow-sm hover-shadow">
+				<div class="card-header bg-white border-0 pb-0">
+					<div class="d-flex justify-content-between align-items-start">
+						<div class="d-flex align-items-center text-muted small">
+							<i class="fas fa-user me-1"></i>
+							<span>{{ post.author }}</span>
 						</div>
-					</div>
-					
-					<div class="card-body pt-2">
-						<h5 class="card-title">
-							<a href="{{ path('actu.show', {'id': post.id}) }}" 
-							   class="text-decoration-none text-dark stretched-link">
-								{{ post.title }}
-							</a>
-						</h5>
-						
-						<p class="card-text text-muted">
-							{{ post.content|length > 120 ? post.content|slice(0, 120) ~ '...' : post.content }}
-						</p>
-						
-						{% if post.categories|length > 0 %}
-							<div class="mb-3">
-								{% for category in post.categories %}
-									<span class="badge bg-secondary me-1">{{ category.name }}</span>
-								{% endfor %}
-							</div>
-						{% endif %}
-					</div>
-					
-					<div class="card-footer bg-white border-0 pt-0">
-						<div class="d-flex justify-content-between align-items-center">
-							<small class="text-muted">
-								{% if post.updatedAt %}
-									<i class="fas fa-edit me-1"></i>
-									Modifié le {{ post.updatedAt|date('d/m/Y') }}
-								{% else %}
-									<i class="fas fa-clock me-1"></i>
-									Publié le {{ post.createdAt|date('d/m/Y à H:i') }}
-								{% endif %}
-							</small>
-							<div class="btn-group btn-group-sm">
-								<a href="{{ path('actu.edit', {'id': post.id}) }}" 
-								   class="btn btn-outline-warning btn-sm position-relative" 
-								   style="z-index: 10;">
-									<i class="fas fa-edit"></i>
-								</a>
-								<a href="{{ path('actu.delete', {'id': post.id}) }}" 
-								   class="btn btn-outline-danger btn-sm position-relative" 
-								   style="z-index: 10;"
-								   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?')">
-									<i class="fas fa-trash"></i>
-								</a>
-							</div>
+						<div class="d-flex align-items-center text-muted small">
+							<i class="fas fa-calendar me-1"></i>
+							<span>{{ post.createdAt|date('d/m/Y') }}</span>
 						</div>
 					</div>
 				</div>
-			</div>
-		{% else %}
-			<div class="col-12">
-				<div class="empty-state text-center py-5">
+
+				<div class="card-body pt-2">
+					<h5 class="card-title">
+						<a href="{{ path('actu.show', {'id': post.id}) }}" class="text-decoration-none text-dark stretched-link">
+							{{ post.title }}
+						</a>
+					</h5>
+
+					<p class="card-text text-muted">
+						{{ post.content|length > 120 ? post.content|slice(0, 120) ~ '...' : post.content }}
+					</p>
+
+					{% if post.categories|length > 0 %}
 					<div class="mb-3">
-						<i class="fas fa-newspaper fa-3x text-muted"></i>
+						{% for category in post.categories %}
+						<span class="badge bg-secondary me-1">{{ category.name }}</span>
+						{% endfor %}
 					</div>
-					<h3 class="text-muted">Aucun article publié</h3>
-					<p class="text-muted mb-4">Commencez par créer votre premier article !</p>
-					<a href="{{ path('actu.create') }}" class="btn btn-primary">
-						<i class="fas fa-plus me-1"></i>Créer un article
-					</a>
+					{% endif %}
+				</div>
+
+				<div class="card-footer bg-white border-0 pt-0">
+					<div class="d-flex justify-content-between align-items-center">
+						<small class="text-muted">
+							{% if post.updatedAt %}
+							<i class="fas fa-edit me-1"></i>
+							Modifié le {{ post.updatedAt|date('d/m/Y') }}
+							{% else %}
+							<i class="fas fa-clock me-1"></i>
+							Publié le {{ post.createdAt|date('d/m/Y à H:i') }}
+							{% endif %}
+						</small>
+						<div class="btn-group btn-group-sm">
+							<a href="{{ path('actu.edit', {'id': post.id}) }}"
+								class="btn btn-outline-warning btn-sm position-relative" style="z-index: 10;">
+								<i class="fas fa-edit"></i>
+							</a>
+							<a href="{{ path('actu.delete', {'id': post.id}) }}"
+								class="btn btn-outline-danger btn-sm position-relative" style="z-index: 10;"
+								onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?')">
+								<i class="fas fa-trash"></i>
+							</a>
+						</div>
+					</div>
 				</div>
 			</div>
+		</div>
+		{% else %}
+		<div class="col-12">
+			<div class="empty-state text-center py-5">
+				<div class="mb-3">
+					<i class="fas fa-newspaper fa-3x text-muted"></i>
+				</div>
+				<h3 class="text-muted">Aucun article publié</h3>
+				<p class="text-muted mb-4">Commencez par créer votre premier article !</p>
+				<a href="{{ path('actu.create') }}" class="btn btn-primary">
+					<i class="fas fa-plus me-1"></i>Créer un article
+				</a>
+			</div>
+		</div>
 		{% endfor %}
 	</div>
 

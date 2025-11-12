@@ -1,127 +1,132 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Article :
-	{{ post.title }}
-{% endblock %}
+{% block title %}{{ post.title }}{% endblock %}
 
 {% block body %}
-	<div class="container mt-4">
-		<div class="row">
-			<div class="col-lg-8 mx-auto">
-				<!-- En-tête de l'article -->
-				<div class="mb-4">
-					<h1 class="display-4 fw-bold text-primary mb-3">{{ post.title }}</h1>
-					
-					<!-- Métadonnées de l'article -->
-					<div class="d-flex flex-wrap align-items-center text-muted mb-3">
-						<div class="me-4">
-							<i class="fas fa-user me-1"></i>
-							<strong>Par {{ post.author }}</strong>
-						</div>
-						<div class="me-4">
-							<i class="fas fa-calendar me-1"></i>
-							{{ post.createdAt|date('d/m/Y à H:i') }}
-						</div>
-						{% if post.updatedAt %}
-							<div class="me-4">
-								<i class="fas fa-edit me-1"></i>
-								Mis à jour le {{ post.updatedAt|date('d/m/Y à H:i') }}
-							</div>
-						{% endif %}
-						<div>
-							<i class="fas fa-eye me-1"></i>
-							<span class="badge bg-{% if post.isPublished %}success{% else %}warning{% endif %}">
-								{% if post.isPublished %}Publié{% else %}Brouillon{% endif %}
-							</span>
-						</div>
-					</div>
+<div class="container mt-4">
+	<!-- Messages Flash avec le composant -->
+	{{ component('flash_messages', {
+	showTitles: false,
+	containerClass: 'mb-4'
+	}) }}
 
-					<!-- Catégories -->
-					{% if post.categories|length > 0 %}
-						<div class="mb-3">
-							<i class="fas fa-tags me-2"></i>
-							{% for category in post.categories %}
-								<span class="badge bg-secondary me-1">{{ category.name }}</span>
-							{% endfor %}
-						</div>
+	<div class="row">
+		<div class="col-lg-8 mx-auto">
+			<!-- En-tête de l'article -->
+			<div class="mb-4">
+				<h1 class="display-4 fw-bold text-primary mb-3">{{ post.title }}</h1>
+
+				<!-- Métadonnées de l'article -->
+				<div class="d-flex flex-wrap align-items-center text-muted mb-3">
+					<div class="me-4">
+						<i class="fas fa-user me-1"></i>
+						<strong>Par {{ post.author }}</strong>
+					</div>
+					<div class="me-4">
+						<i class="fas fa-calendar me-1"></i>
+						{{ post.createdAt|date('d/m/Y à H:i') }}
+					</div>
+					{% if post.updatedAt %}
+					<div class="me-4">
+						<i class="fas fa-edit me-1"></i>
+						Mis à jour le {{ post.updatedAt|date('d/m/Y à H:i') }}
+					</div>
 					{% endif %}
-				</div>
-
-				<!-- Contenu de l'article -->
-				<div class="card">
-					<div class="card-body">
-						<div class="article-content">
-							{{ post.content|nl2br }}
-						</div>
-					</div>
-				</div>
-
-				<!-- Actions -->
-				<div class="d-flex justify-content-between align-items-center mt-4">
-					<a href="{{ path('actu.index') }}" class="btn btn-outline-primary">
-						<i class="fas fa-arrow-left me-1"></i>
-						Retour à la liste
-					</a>
-					
 					<div>
-						<a href="{{ path('actu.edit', {id: post.id}) }}" class="btn btn-warning">
-							<i class="fas fa-edit me-1"></i>
-							Modifier
-						</a>
-						<button type="button" class="btn btn-danger ms-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
-							<i class="fas fa-trash me-1"></i>
-							Supprimer
-						</button>
+						<i class="fas fa-eye me-1"></i>
+						<span class="badge bg-{% if post.isPublished %}success{% else %}warning{% endif %}">
+							{% if post.isPublished %}Publié{% else %}Brouillon{% endif %}
+						</span>
+					</div>
+				</div>
+
+				<!-- Catégories -->
+				{% if post.categories|length > 0 %}
+				<div class="mb-3">
+					<i class="fas fa-tags me-2"></i>
+					{% for category in post.categories %}
+					<span class="badge bg-secondary me-1">{{ category.name }}</span>
+					{% endfor %}
+				</div>
+				{% endif %}
+			</div>
+
+			<!-- Contenu de l'article -->
+			<div class="card">
+				<div class="card-body">
+					<div class="article-content">
+						{{ post.content|nl2br }}
 					</div>
 				</div>
 			</div>
-		</div>
-	</div>
 
-	<!-- Modal de confirmation de suppression -->
-	<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					Êtes-vous sûr de vouloir supprimer l'article "<strong>{{ post.title }}</strong>" ? Cette action est irréversible.
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-					<a href="{{ path('actu.delete', {id: post.id}) }}" class="btn btn-danger">
-						<i class="fas fa-trash me-1"></i>
-						Supprimer définitivement
+			<!-- Actions -->
+			<div class="d-flex justify-content-between align-items-center mt-4">
+				<a href="{{ path('actu.index') }}" class="btn btn-outline-primary">
+					<i class="fas fa-arrow-left me-1"></i>
+					Retour à la liste
+				</a>
+
+				<div>
+					<a href="{{ path('actu.edit', {id: post.id}) }}" class="btn btn-warning">
+						<i class="fas fa-edit me-1"></i>
+						Modifier
 					</a>
+					<button type="button" class="btn btn-danger ms-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+						<i class="fas fa-trash me-1"></i>
+						Supprimer
+					</button>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
 
-	<style>
-		.article-content {
-			font-size: 1.1rem;
-			line-height: 1.8;
-			color: #333;
-		}
-		
-		.article-content p {
-			margin-bottom: 1.5rem;
-		}
+<!-- Modal de confirmation de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				Êtes-vous sûr de vouloir supprimer l'article "<strong>{{ post.title }}</strong>" ? Cette action est
+				irréversible.
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+				<a href="{{ path('actu.delete', {id: post.id}) }}" class="btn btn-danger">
+					<i class="fas fa-trash me-1"></i>
+					Supprimer définitivement
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
 
-		.display-4 {
-			line-height: 1.2;
-		}
+<style>
+	.article-content {
+		font-size: 1.1rem;
+		line-height: 1.8;
+		color: #333;
+	}
 
-		.card {
-			border: none;
-			box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-		}
+	.article-content p {
+		margin-bottom: 1.5rem;
+	}
 
-		.badge {
-			font-size: 0.8rem;
-		}
-	</style>
+	.display-4 {
+		line-height: 1.2;
+	}
+
+	.card {
+		border: none;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	}
+
+	.badge {
+		font-size: 0.8rem;
+	}
+</style>
 {% endblock %}
