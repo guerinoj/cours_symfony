@@ -24,6 +24,17 @@
 					</ul>
 				</li>
 			</ul>
+			<div class="d-flex">
+				{% if app.user %}
+					<div class="navbar-text me-3">
+						Connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>
+					</div>
+					<a href="{{ path('app_logout') }}" class="btn btn-outline-danger">Déconnexion</a>
+				{% else %}
+					<a href="{{ path('app_login') }}" class="btn btn-outline-primary me-2">Connexion</a>
+					<a href="{{ path('app_register') }}" class="btn btn-primary">Inscription</a>
+				{% endif %}
+			</div>
 		</div>
 	</div>
 </nav>
