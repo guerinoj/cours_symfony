@@ -31,6 +31,7 @@ final class Navbar
     // Ajouter des liens admin si l'utilisateur a le rôle ROLE_ADMIN
     if ($this->security->isGranted('ROLE_ADMIN')) {
       $links[] = ['path' => 'app_category_new', 'label' => 'Nouvelle catégorie', 'icon' => '➕'];
+      $links[] = ['path' => 'app_admin_user_index', 'label' => 'Gestion des utilisateurs', 'icon' => '👥'];
     }
 
     return $links;
