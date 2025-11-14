@@ -1,38 +1,50 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary" {attributes}>
 	<div class="container-fluid">
-		<a class="navbar-brand" href="{{ path('home.index') }}"><img src="{{ asset('img/logo.svg') }}" class="navbar-logo" style="width:100px;" alt="Tech Innov"></a>
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<a class="navbar-brand" href="{{ path('home.index') }}"><img src="{{ asset('img/logo.svg') }}" class="navbar-logo"
+				style="width:100px;" alt="Tech Innov"></a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-				{% for link in links %}
-					<li class="nav-item">
-						<a class="nav-link" href="{{ path(link.path) }}">{{ link.label }}</a>
-					</li>
+				{% for link in this.getLinks() %}
+				<li class="nav-item">
+					<a class="nav-link {% if app.request.get('_route') == link.path %}active{% endif %}"
+						href="{{ path(link.path) }}">
+						{% if link.icon is defined %}{{ link.icon }} {% endif %}{{ link.label }}
+					</a>
+				</li>
 				{% endfor %}
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-						News
+						📰 Derniers articles
 					</a>
 					<ul class="dropdown-menu">
 						{% for post in this.getPosts() %}
-							<li>
-								<a class="dropdown-item" href="{{ path('actu.show', { 'id': post.id }) }}">{{ post.title }}</a>
-							</li>
+						<li>
+							<a class="dropdown-item" href="{{ path('actu.show', { 'id': post.id }) }}">{{ post.title }}</a>
+						</li>
+						{% else %}
+						<li>
+							<span class="dropdown-item text-muted">Aucun article publié</span>
+						</li>
 						{% endfor %}
 					</ul>
 				</li>
 			</ul>
-			<div class="d-flex">
+			<div class="d-flex align-items-center">
 				{% if app.user %}
-					<div class="navbar-text me-3">
-						Connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>
-					</div>
-					<a href="{{ path('app_logout') }}" class="btn btn-outline-danger">Déconnexion</a>
+				<div class="navbar-text me-3">
+					👤 <strong>{{ app.user.userIdentifier }}</strong>
+					{% if is_granted('ROLE_ADMIN') %}
+					<span class="badge bg-danger ms-1">Admin</span>
+					{% endif %}
+				</div>
+				<a href="{{ path('app_logout') }}" class="btn btn-outline-danger btn-sm">Déconnexion</a>
 				{% else %}
-					<a href="{{ path('app_login') }}" class="btn btn-outline-primary me-2">Connexion</a>
-					<a href="{{ path('app_register') }}" class="btn btn-primary">Inscription</a>
+				<a href="{{ path('app_login') }}" class="btn btn-outline-primary btn-sm me-2">Connexion</a>
+				<a href="{{ path('app_register') }}" class="btn btn-primary btn-sm">Inscription</a>
 				{% endif %}
 			</div>
 		</div>
