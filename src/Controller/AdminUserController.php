@@ -16,31 +16,31 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class AdminUserController extends AbstractController
 {
-    #[Route('/', name: 'app_admin_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
-    {
-        return $this->render('admin_user/index.html.twig', [
-            'users' => $userRepository->findAll(),
-        ]);
+  #[Route('/', name: 'app_admin_user_index', methods: ['GET'])]
+  public function index(UserRepository $userRepository): Response
+  {
+    return $this->render('admin_user/index.html.twig', [
+      'users' => $userRepository->findAll(),
+    ]);
+  }
+
+  #[Route('/{id}/edit-roles', name: 'app_admin_user_edit_roles', methods: ['GET', 'POST'])]
+  public function editRoles(Request $request, User $user, EntityManagerInterface $entityManager): Response
+  {
+    $form = $this->createForm(UserRoleType::class, $user);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+      $entityManager->flush();
+
+      $this->addFlash('success', 'Les rôles ont été mis à jour avec succès.');
+
+      return $this->redirectToRoute('app_admin_user_index');
     }
 
-    #[Route('/{id}/edit-roles', name: 'app_admin_user_edit_roles', methods: ['GET', 'POST'])]
-    public function editRoles(Request $request, User $user, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(UserRoleType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Les rôles ont été mis à jour avec succès.');
-
-            return $this->redirectToRoute('app_admin_user_index');
-        }
-
-        return $this->render('admin_user/edit_roles.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
-    }
+    return $this->render('admin_user/edit_roles.html.twig', [
+      'user' => $user,
+      'form' => $form,
+    ]);
+  }
 }

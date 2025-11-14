@@ -12,13 +12,13 @@
 				<li class="nav-item">
 					<a class="nav-link {% if app.request.get('_route') == link.path %}active{% endif %}"
 						href="{{ path(link.path) }}">
-						{% if link.icon is defined %}{{ link.icon }} {% endif %}{{ link.label }}
+						{% if link.icon is defined %}<i class="{{ link.icon }}"></i> {% endif %}{{ link.label }}
 					</a>
 				</li>
 				{% endfor %}
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-						📰 Derniers articles
+						<i class="fa-solid fa-newspaper"></i> Derniers articles
 					</a>
 					<ul class="dropdown-menu">
 						{% for post in this.getPosts() %}
@@ -36,7 +36,7 @@
 			<div class="d-flex align-items-center">
 				{% if app.user %}
 				<div class="navbar-text me-3">
-					👤 <strong>{{ app.user.userIdentifier }}</strong>
+					<i class="fa-solid fa-user"></i> <strong>{{ app.user.userIdentifier }}</strong>
 					{% if is_granted('ROLE_ADMIN') %}
 					<span class="badge bg-danger ms-1">Admin</span>
 					{% endif %}

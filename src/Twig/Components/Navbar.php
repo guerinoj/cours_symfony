@@ -18,20 +18,20 @@ final class Navbar
   public function getLinks(): array
   {
     $links = [
-      ['path' => 'home.index', 'label' => 'Accueil', 'icon' => '🏠'],
-      ['path' => 'actu.index', 'label' => 'Actualités', 'icon' => '📰'],
+      ['path' => 'home.index', 'label' => 'Accueil', 'icon' => 'fa-solid fa-house'],
+      ['path' => 'actu.index', 'label' => 'Actualités', 'icon' => 'fa-solid fa-newspaper'],
     ];
 
     // Ajouter des liens pour les utilisateurs connectés
     if ($this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
-      $links[] = ['path' => 'app_category_index', 'label' => 'Catégories', 'icon' => '📁'];
-      $links[] = ['path' => 'author.index', 'label' => 'Auteurs', 'icon' => '✍️'];
+      $links[] = ['path' => 'app_category_index', 'label' => 'Catégories', 'icon' => 'fa-solid fa-folder'];
+      $links[] = ['path' => 'author.index', 'label' => 'Auteurs', 'icon' => 'fa-solid fa-pen-fancy'];
     }
 
     // Ajouter des liens admin si l'utilisateur a le rôle ROLE_ADMIN
     if ($this->security->isGranted('ROLE_ADMIN')) {
-      $links[] = ['path' => 'app_category_new', 'label' => 'Nouvelle catégorie', 'icon' => '➕'];
-      $links[] = ['path' => 'app_admin_user_index', 'label' => 'Gestion des utilisateurs', 'icon' => '👥'];
+      $links[] = ['path' => 'app_category_new', 'label' => 'Nouvelle catégorie', 'icon' => 'fa-solid fa-circle-plus'];
+      $links[] = ['path' => 'app_admin_user_index', 'label' => 'Gestion des utilisateurs', 'icon' => 'fa-solid fa-users'];
     }
 
     return $links;

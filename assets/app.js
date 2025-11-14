@@ -6,6 +6,9 @@ import "./bootstrap.js";
  * which should already be in your base.html.twig.
  */
 import "./styles/app.css";
+import "@fortawesome/fontawesome-free/css/fontawesome.min.css";
+import "@fortawesome/fontawesome-free/css/solid.min.css";
+import "@fortawesome/fontawesome-free/css/regular.min.css";
 
 // Import conditionnel des scripts spécifiques aux pages
 // Les scripts de pages seront chargés uniquement quand nécessaire
