@@ -6,7 +6,8 @@
 <div class="container mt-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ path('author.index') }}"><i class="fa-solid fa-pen-fancy"></i> Auteurs</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('author.index') }}"><i class="fa-solid fa-pen-fancy"></i>
+                    Auteurs</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{ author.name }}</li>
         </ol>
     </nav>
@@ -19,7 +20,7 @@
                         <i class="fa-solid fa-user-circle fa-5x text-primary"></i>
                     </div>
                     <h2 class="card-title h4 mb-3">{{ author.name }}</h2>
-                    
+
                     {% if author.email %}
                     <p class="card-text mb-3">
                         <i class="fa-solid fa-envelope"></i>
@@ -28,9 +29,9 @@
                         </a>
                     </p>
                     {% endif %}
-                    
+
                     <hr>
-                    
+
                     <div class="d-flex justify-content-around">
                         <div>
                             <h3 class="h5 mb-0">{{ author.posts|length }}</h3>
@@ -52,11 +53,12 @@
                     {% if author.posts|length > 0 %}
                     <div class="list-group">
                         {% for post in author.posts %}
-                        <a href="{{ path('actu.show', {'id': post.id}) }}" class="list-group-item list-group-item-action">
+                        <a href="{{ path('actu.show', {'id': post.id}) }}"
+                            class="list-group-item list-group-item-action">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">{{ post.title }}</h5>
                                 <small class="text-muted">
-                                    <i class="fa-solid fa-calendar"></i> 
+                                    <i class="fa-solid fa-calendar"></i>
                                     {{ post.createdAt ? post.createdAt|date('d/m/Y') : '' }}
                                 </small>
                             </div>
@@ -107,4 +109,3 @@
     </div>
 </div>
 {% endblock %}
-

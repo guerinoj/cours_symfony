@@ -1,15 +1,185 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello {{ name }}!{% endblock %}
+{% block title %}Accueil - Tech Innov{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-12">
-            <h1 class="mb-4">Hello {{ name }}!</h1>
-            <p class="lead">Welcome to our Symfony application.</p>
-            
+<!-- Hero Section -->
+<div class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="fa-solid fa-rocket"></i> Bienvenue sur Tech Innov
+                </h1>
+                <p class="lead mb-4">
+                    Découvrez les dernières actualités technologiques, innovations et tendances du monde numérique.
+                    Restez informé avec nos articles rédigés par des experts passionnés.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="{{ path('actu.index') }}" class="btn btn-light btn-lg">
+                        <i class="fa-solid fa-newspaper"></i> Voir les articles
+                    </a>
+                    {% if not app.user %}
+                    <a href="{{ path('app_register') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fa-solid fa-user-plus"></i> S'inscrire
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center">
+                <i class="fa-solid fa-laptop-code fa-10x opacity-75"></i>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Stats Section -->
+<div class="bg-light py-4">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="p-3">
+                    <i class="fa-solid fa-newspaper fa-3x text-primary mb-2"></i>
+                    <h3 class="h4 mb-0">{{ latestPosts|length }}+</h3>
+                    <p class="text-muted mb-0">Articles publiés</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3">
+                    <i class="fa-solid fa-folder fa-3x text-primary mb-2"></i>
+                    <h3 class="h4 mb-0">{{ categories|length }}</h3>
+                    <p class="text-muted mb-0">Catégories</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3">
+                    <i class="fa-solid fa-users fa-3x text-primary mb-2"></i>
+                    <h3 class="h4 mb-0">Communauté</h3>
+                    <p class="text-muted mb-0">En croissance</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Latest Posts Section -->
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold mb-3">
+            <i class="fa-solid fa-fire"></i> Derniers Articles
+        </h2>
+        <p class="lead text-muted">Découvrez nos publications les plus récentes</p>
+    </div>
+
+    {% if latestPosts|length > 0 %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+        {% for post in latestPosts %}
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0 hover-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        {% if post.categories|length > 0 %}
+                        {% for category in post.categories|slice(0, 1) %}
+                        <span class="badge bg-primary">
+                            <i class="fa-solid fa-folder"></i> {{ category.name }}
+                        </span>
+                        {% endfor %}
+                        {% endif %}
+                        <small class="text-muted">
+                            <i class="fa-solid fa-clock"></i>
+                            {{ post.createdAt|date('d/m/Y') }}
+                        </small>
+                    </div>
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text text-muted">
+                        {{ post.content|u.truncate(120, '...') }}
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fa-solid fa-user"></i> {{ post.author.name }}
+                        </small>
+                        <a href="{{ path('actu.show', {'id': post.id}) }}" class="btn btn-sm btn-primary">
+                            Lire plus <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center">
+        <a href="{{ path('actu.index') }}" class="btn btn-outline-primary btn-lg">
+            <i class="fa-solid fa-list"></i> Voir tous les articles
+        </a>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center" role="alert">
+        <i class="fa-solid fa-circle-info fa-2x mb-3"></i>
+        <p class="mb-0">Aucun article publié pour le moment. Revenez bientôt !</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Categories Section -->
+{% if categories|length > 0 %}
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">
+                <i class="fa-solid fa-layer-group"></i> Catégories
+            </h2>
+            <p class="lead text-muted">Explorez nos différentes thématiques</p>
+        </div>
+
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+            {% for category in categories %}
+            <div class="col">
+                <div class="card text-center shadow-sm border-0 h-100 hover-card">
+                    <div class="card-body">
+                        <i class="fa-solid fa-folder fa-3x text-primary mb-3"></i>
+                        <h6 class="card-title mb-2">{{ category.name }}</h6>
+                        {% if category.description %}
+                        <p class="card-text small text-muted">{{ category.description|u.truncate(60, '...') }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- CTA Section -->
+<div class="bg-primary text-white py-5">
+    <div class="container text-center">
+        <h2 class="display-6 fw-bold mb-3">Rejoignez notre communauté</h2>
+        <p class="lead mb-4">
+            Inscrivez-vous pour accéder à du contenu exclusif et interagir avec nos auteurs
+        </p>
+        {% if not app.user %}
+        <a href="{{ path('app_register') }}" class="btn btn-light btn-lg">
+            <i class="fa-solid fa-rocket"></i> Créer un compte gratuitement
+        </a>
+        {% else %}
+        <a href="{{ path('actu.index') }}" class="btn btn-light btn-lg">
+            <i class="fa-solid fa-newspaper"></i> Découvrir les articles
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+</style>
 {% endblock %}
