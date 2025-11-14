@@ -1,9 +1,110 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AuthorController!{% endblock %}
+{% block title %}{{ author.name }} - Profil auteur{% endblock %}
 
 {% block body %}
-    <h1>{{ author.name }}</h1>
-    <p>Email: {{ author.email }}</p>
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('author.index') }}"><i class="fa-solid fa-pen-fancy"></i> Auteurs</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ author.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fa-solid fa-user-circle fa-5x text-primary"></i>
+                    </div>
+                    <h2 class="card-title h4 mb-3">{{ author.name }}</h2>
+                    
+                    {% if author.email %}
+                    <p class="card-text mb-3">
+                        <i class="fa-solid fa-envelope"></i>
+                        <a href="mailto:{{ author.email }}" class="text-decoration-none">
+                            {{ author.email }}
+                        </a>
+                    </p>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-around">
+                        <div>
+                            <h3 class="h5 mb-0">{{ author.posts|length }}</h3>
+                            <small class="text-muted">Article{{ author.posts|length > 1 ? 's' : '' }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="h5 mb-0">
+                        <i class="fa-solid fa-newspaper"></i> Articles de {{ author.name }}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if author.posts|length > 0 %}
+                    <div class="list-group">
+                        {% for post in author.posts %}
+                        <a href="{{ path('actu.show', {'id': post.id}) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ post.title }}</h5>
+                                <small class="text-muted">
+                                    <i class="fa-solid fa-calendar"></i> 
+                                    {{ post.createdAt ? post.createdAt|date('d/m/Y') : '' }}
+                                </small>
+                            </div>
+                            {% if post.content %}
+                            <p class="mb-1 text-muted">{{ post.content|u.truncate(150, '...') }}</p>
+                            {% endif %}
+                            <div class="d-flex gap-2 align-items-center">
+                                {% if post.categories|length > 0 %}
+                                <small>
+                                    {% for category in post.categories %}
+                                    <span class="badge bg-secondary">
+                                        <i class="fa-solid fa-folder"></i> {{ category.name }}
+                                    </span>
+                                    {% endfor %}
+                                </small>
+                                {% endif %}
+                                {% if post.isPublished %}
+                                <small>
+                                    <span class="badge bg-success">
+                                        <i class="fa-solid fa-check"></i> Publié
+                                    </span>
+                                </small>
+                                {% else %}
+                                <small>
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fa-solid fa-clock"></i> Brouillon
+                                    </span>
+                                </small>
+                                {% endif %}
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info mb-0" role="alert">
+                        <i class="fa-solid fa-circle-info"></i> Cet auteur n'a pas encore publié d'articles.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{{ path('author.index') }}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+</div>
 {% endblock %}
 

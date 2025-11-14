@@ -17,24 +17,25 @@ final class Navbar
 
   public function getLinks(): array
   {
-    $links = [
+    return [
       ['path' => 'home.index', 'label' => 'Accueil', 'icon' => 'fa-solid fa-house'],
       ['path' => 'actu.index', 'label' => 'Actualités', 'icon' => 'fa-solid fa-newspaper'],
     ];
+  }
 
-    // Ajouter des liens pour les utilisateurs connectés
-    if ($this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
-      $links[] = ['path' => 'app_category_index', 'label' => 'Catégories', 'icon' => 'fa-solid fa-folder'];
-      $links[] = ['path' => 'author.index', 'label' => 'Auteurs', 'icon' => 'fa-solid fa-pen-fancy'];
+  public function getAdminLinks(): array
+  {
+    if (!$this->security->isGranted('ROLE_ADMIN')) {
+      return [];
     }
 
-    // Ajouter des liens admin si l'utilisateur a le rôle ROLE_ADMIN
-    if ($this->security->isGranted('ROLE_ADMIN')) {
-      $links[] = ['path' => 'app_category_new', 'label' => 'Nouvelle catégorie', 'icon' => 'fa-solid fa-circle-plus'];
-      $links[] = ['path' => 'app_admin_user_index', 'label' => 'Gestion des utilisateurs', 'icon' => 'fa-solid fa-users'];
-    }
-
-    return $links;
+    return [
+      ['path' => 'app_category_index', 'label' => 'Catégories', 'icon' => 'fa-solid fa-folder'],
+      ['path' => 'author.index', 'label' => 'Auteurs', 'icon' => 'fa-solid fa-pen-fancy'],
+      ['path' => 'app_admin_user_index', 'label' => 'Utilisateurs', 'icon' => 'fa-solid fa-users'],
+      ['divider' => true],
+      ['path' => 'app_category_new', 'label' => 'Nouvelle catégorie', 'icon' => 'fa-solid fa-circle-plus'],
+    ];
   }
 
   public function getPosts(): array

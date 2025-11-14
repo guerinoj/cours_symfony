@@ -1,17 +1,52 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AuthorController!{% endblock %}
+{% block title %}Gestion des auteurs{% endblock %}
 
 {% block body %}
-    <h1>Liste des auteurs</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fa-solid fa-pen-fancy"></i> Gestion des auteurs</h1>
+        <a href="{{ path('author.create') }}" class="btn btn-primary">
+            <i class="fa-solid fa-circle-plus"></i> Créer un auteur
+        </a>
+    </div>
 
-    <ul>
+    {% if authors|length > 0 %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for author in authors %}
-            <li>
-                <a href="{{ path('author.show', { 'id': author.id }) }}">{{ author.name }}</a>
-            </li>
-        {% else %}
-            <li>Aucun auteur trouvé.</li>
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fa-solid fa-user"></i> {{ author.name }}
+                    </h5>
+                    {% if author.email %}
+                    <p class="card-text text-muted mb-2">
+                        <i class="fa-solid fa-envelope"></i> 
+                        <a href="mailto:{{ author.email }}" class="text-decoration-none">{{ author.email }}</a>
+                    </p>
+                    {% endif %}
+                    <p class="card-text">
+                        <span class="badge bg-info text-dark">
+                            <i class="fa-solid fa-newspaper"></i> 
+                            {{ author.posts|length }} article{{ author.posts|length > 1 ? 's' : '' }}
+                        </span>
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ path('author.show', { 'id': author.id }) }}" class="btn btn-sm btn-outline-primary w-100">
+                        <i class="fa-solid fa-eye"></i> Voir les détails
+                    </a>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        <i class="fa-solid fa-circle-info"></i> Aucun auteur trouvé. 
+        <a href="{{ path('author.create') }}" class="alert-link">Créez-en un maintenant</a>.
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

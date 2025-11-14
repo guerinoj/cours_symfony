@@ -16,6 +16,29 @@
 					</a>
 				</li>
 				{% endfor %}
+
+				{% if is_granted('ROLE_ADMIN') %}
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<i class="fa-solid fa-user-shield"></i> Administration
+					</a>
+					<ul class="dropdown-menu">
+						{% for link in this.getAdminLinks() %}
+							{% if link.divider is defined and link.divider %}
+								<li><hr class="dropdown-divider"></li>
+							{% else %}
+								<li>
+									<a class="dropdown-item {% if app.request.get('_route') == link.path %}active{% endif %}" 
+										href="{{ path(link.path) }}">
+										<i class="{{ link.icon }}"></i> {{ link.label }}
+									</a>
+								</li>
+							{% endif %}
+						{% endfor %}
+					</ul>
+				</li>
+				{% endif %}
+
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 						<i class="fa-solid fa-newspaper"></i> Derniers articles
